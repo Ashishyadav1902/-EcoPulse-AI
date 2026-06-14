@@ -68,6 +68,24 @@ class ApiService {
             body: payload
         });
     }
+
+    static async updateProfile(payload) {
+        return this.request('/user/profile', {
+            method: 'PUT',
+            body: payload
+        });
+    }
+
+    static async getWeather() {
+        return this.request('/weather');
+    }
+
+    static async chat(message) {
+        return this.request('/chat', {
+            method: 'POST',
+            body: { message }
+        });
+    }
 }
 
 window.api = ApiService;
