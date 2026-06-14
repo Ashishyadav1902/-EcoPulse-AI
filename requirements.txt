@@ -4,7 +4,7 @@ Flask-Login==0.6.3
 Flask-Bcrypt==1.0.1
 Flask-Cors==4.0.0
 python-dotenv==1.0.0
-google-generativeai==0.3.1
+google-generativeai
 reportlab==4.0.7
 psycopg2-binary
 gunicorn==21.2.0
