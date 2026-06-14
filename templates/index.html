@@ -25,7 +25,7 @@
     <nav class="navbar glass">
         <div class="logo">
             <i class="fa-solid fa-leaf text-primary"></i>
-            <span>EcoPulse <span class="text-gradient">AI</span></span>
+            <span style="font-weight: 700;">EcoPulse</span>
         </div>
         <div class="nav-links">
             <a href="#" id="nav-home">Home</a>
@@ -64,7 +64,8 @@
 
             <!-- FEATURES SECTION -->
             <div id="features" class="features-section fade-in-up delay-1">
-                <h2 class="section-title">Why EcoPulse <span class="text-gradient">AI</span>?</h2>
+                <h2 class="section-title">Features</h2>
+                <p class="section-subtitle">Track, analyze, and reduce your carbon footprint with actionable insights.</p>
                 <div class="features-grid">
                     <div class="feature-card glass">
                         <div class="feature-icon"><i class="fa-solid fa-calculator"></i></div>
@@ -104,7 +105,7 @@
                 <div class="about-content">
                     <h2 class="section-title">Meet the <span class="text-gradient">Developer</span></h2>
                     <p class="about-intro">Hi, I'm <strong>Ashish Kumar</strong>! I am a passionate BCA Student, Full-Stack Developer, and Python Automation Expert.</p>
-                    <p class="about-text">With a deep focus on building production-ready web applications and intelligent automation tools, I thrive at the intersection of design and robust engineering. My tech stack includes Python, Flask, modern JavaScript, and building AI-integrated workflows to solve real-world problems. EcoPulse AI represents my vision of using technology to drive sustainable habits.</p>
+                    <p class="about-text">With a deep focus on building production-ready web applications and intelligent automation tools, I thrive at the intersection of design and robust engineering. My tech stack includes Python, Flask, modern JavaScript, and building AI-integrated workflows to solve real-world problems. EcoPulse represents my vision of using technology to drive sustainable habits.</p>
                     <p class="about-text">I am currently open to exciting internship opportunities where I can contribute my skills to impactful projects.</p>
                     <div class="about-links">
                         <a href="https://github.com/ashishkumar9589411421-svg" target="_blank" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
@@ -118,8 +119,8 @@
 
             <!-- GET STARTED SECTION -->
             <div id="get-started" class="get-started-section glass fade-in-up delay-3" style="text-align: center; padding: 60px; margin: 80px 0; border-radius: var(--radius-lg);">
-                <h2 class="section-title">Ready to Make an <span class="text-gradient">Impact?</span></h2>
-                <p style="font-size: 1.2rem; color: var(--text-light); margin-bottom: 40px;">Join EcoPulse AI today and take the first step towards a sustainable lifestyle.</p>
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ready to start tracking?</h2>
+                <p style="color: var(--text-light); max-width: 600px; margin: 0 auto 40px auto; font-size: 1.1rem; line-height: 1.6;">Join today to gain insights into your environmental footprint.</p>
                 <div class="steps-grid" style="display: flex; justify-content: center; gap: 40px; margin-bottom: 40px; flex-wrap: wrap;">
                     <div class="step-card glass" style="flex: 1; min-width: 200px; padding: 30px; border-radius: var(--radius-lg);">
                         <div class="step-number" style="font-size: 3rem; color: var(--primary); font-weight: 700; margin-bottom: 10px;">1</div>
@@ -192,14 +193,21 @@
                     <button class="btn btn-primary" onclick="app.showView('calculator-page')" style="margin-top: 15px;"><i class="fa-solid fa-plus"></i> Add Record</button>
                 </div>
                 <!-- Weather Widget -->
-                <div id="weather-widget" class="glass" style="padding: 15px 25px; display: flex; align-items: center; gap: 15px; display: none;">
-                    <div id="weather-icon" style="font-size: 2.5rem; color: var(--accent);">
+                <div id="weather-widget" class="glass" style="padding: 15px 25px; display: flex; align-items: center; gap: 15px; min-width: 300px;">
+                    <div id="weather-icon" style="font-size: 2.5rem; color: var(--accent); display: none;">
                         <i class="fa-solid fa-cloud-sun"></i>
                     </div>
-                    <div>
+                    <div id="weather-info" style="display: none;">
                         <h4 id="weather-temp" style="margin: 0; font-size: 1.5rem;">--°C</h4>
                         <p id="weather-desc" style="margin: 0; color: var(--text-light); text-transform: capitalize; font-size: 0.9rem;">--</p>
                         <small id="weather-loc" style="color: var(--primary); font-weight: 500;">--</small>
+                    </div>
+                    <div id="weather-input-container" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">We couldn't find your city to show weather.</p>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="text" id="manual-city-input" placeholder="Enter your city..." style="flex: 1; padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1);">
+                            <button id="btn-save-city" class="btn btn-primary" style="padding: 5px 15px;">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -242,8 +250,9 @@
                         <canvas id="pieChart"></canvas>
                     </div>
                 </div>
+                <!-- Suggestions -->
                 <div class="recommendations-container glass" style="grid-column: span 1;">
-                    <h3>AI Recommendations <i class="fa-solid fa-wand-magic-sparkles text-accent"></i></h3>
+                    <h3>Eco Insights</h3>
                     <div id="ai-general" style="margin-bottom: 20px; font-weight: 500; color: var(--primary);">
                         <!-- General message -->
                         <div class="skeleton skeleton-text"></div>
@@ -321,8 +330,7 @@
                 </div>
                 
                 <div class="calc-actions glass">
-                    <div class="calc-actions glass">
-                    <button type="submit" class="btn btn-primary btn-large btn-full">Calculate & Save</button>
+                    <button type="submit" class="btn btn-primary btn-large btn-full">Save Record</button>
                 </div>
             </form>
         </section>
@@ -354,24 +362,12 @@
 
     </main>
 
-    <!-- FLOATING CHAT WIDGET -->
+    <!-- FLOATING CHAT WIDGET (Disabled for now) -->
+    <!--
     <div id="chat-widget" class="chat-widget hidden">
-        <div class="chat-header">
-            <h4><i class="fa-solid fa-robot"></i> Eco Assistant</h4>
-            <button id="close-chat" class="btn-icon" style="background: none; border: none; color: white; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="chat-messages" class="chat-messages">
-            <div class="chat-msg bot-msg">Hi! I'm your Eco Assistant. Ask me anything about your footprint or sustainability tips!</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Type a message...">
-            <button id="send-chat" class="btn btn-primary btn-icon"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-    
-    <button id="open-chat-btn" class="floating-chat-btn hidden">
-        <i class="fa-solid fa-message"></i>
+    ...
     </button>
+    -->
 
     <!-- Global Footer -->
     <footer class="footer glass">
@@ -379,9 +375,9 @@
             <div class="footer-brand">
                 <div class="logo">
                     <i class="fa-solid fa-leaf text-primary"></i>
-                    <span>EcoPulse <span class="text-gradient">AI</span></span>
+                    <span style="font-weight: 700;">EcoPulse</span>
                 </div>
-                <p>Tracking carbon. Building a greener tomorrow, today.</p>
+                <p>Tracking carbon. Building a greener tomorrow.</p>
             </div>
             <div class="footer-links">
                 <h3>Links</h3>
@@ -396,7 +392,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 EcoPulse AI. Built with ❤️ by Ashish Kumar.</p>
+            <p>&copy; 2026 EcoPulse. All rights reserved.</p>
         </div>
     </footer>
 
