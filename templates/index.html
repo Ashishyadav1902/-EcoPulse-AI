@@ -15,6 +15,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/chat.css">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -33,6 +34,7 @@
             <a href="#" id="nav-login-btn" class="btn btn-outline">Login</a>
             <a href="#" id="nav-register-btn" class="btn btn-primary">Start Tracking</a>
             <a href="#" id="nav-dashboard-btn" class="hidden">Dashboard</a>
+            <a href="#" id="nav-profile-btn" class="hidden">Profile</a>
             <a href="#" id="nav-logout-btn" class="hidden btn btn-outline">Logout</a>
         </div>
     </nav>
@@ -184,9 +186,22 @@
 
         <!-- DASHBOARD -->
         <section id="dashboard-page" class="view hidden">
-            <div class="dashboard-header fade-in">
-                <h2>Hello, <span id="dash-username" class="text-primary">User</span>!</h2>
-                <button class="btn btn-primary" onclick="app.showView('calculator-page')"><i class="fa-solid fa-plus"></i> Add Record</button>
+            <div class="dashboard-header fade-in" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h2>Hello, <span id="dash-username" class="text-primary">User</span>!</h2>
+                    <button class="btn btn-primary" onclick="app.showView('calculator-page')" style="margin-top: 15px;"><i class="fa-solid fa-plus"></i> Add Record</button>
+                </div>
+                <!-- Weather Widget -->
+                <div id="weather-widget" class="glass" style="padding: 15px 25px; display: flex; align-items: center; gap: 15px; display: none;">
+                    <div id="weather-icon" style="font-size: 2.5rem; color: var(--accent);">
+                        <i class="fa-solid fa-cloud-sun"></i>
+                    </div>
+                    <div>
+                        <h4 id="weather-temp" style="margin: 0; font-size: 1.5rem;">--°C</h4>
+                        <p id="weather-desc" style="margin: 0; color: var(--text-light); text-transform: capitalize; font-size: 0.9rem;">--</p>
+                        <small id="weather-loc" style="color: var(--primary); font-weight: 500;">--</small>
+                    </div>
+                </div>
             </div>
 
             <div class="stats-grid fade-in-up delay-1">
@@ -227,13 +242,23 @@
                         <canvas id="pieChart"></canvas>
                     </div>
                 </div>
-                <div class="recommendations-container glass">
+                <div class="recommendations-container glass" style="grid-column: span 1;">
                     <h3>AI Recommendations <i class="fa-solid fa-wand-magic-sparkles text-accent"></i></h3>
-                    <div id="ai-recommendations" class="recs-list">
-                        <!-- Skeleton loading -->
+                    <div id="ai-general" style="margin-bottom: 20px; font-weight: 500; color: var(--primary);">
+                        <!-- General message -->
                         <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-text"></div>
+                    </div>
+                    <div class="ai-dos-donts" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div id="ai-dos" class="recs-list">
+                            <h4 style="color: var(--success); margin-bottom: 10px;"><i class="fa-solid fa-check-circle"></i> Do</h4>
+                            <!-- Skeleton loading -->
+                            <div class="skeleton skeleton-text"></div>
+                        </div>
+                        <div id="ai-donts" class="recs-list">
+                            <h4 style="color: var(--danger); margin-bottom: 10px;"><i class="fa-solid fa-times-circle"></i> Don't</h4>
+                            <!-- Skeleton loading -->
+                            <div class="skeleton skeleton-text"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,14 +321,59 @@
                 </div>
                 
                 <div class="calc-actions glass">
+                    <div class="calc-actions glass">
                     <button type="submit" class="btn btn-primary btn-large btn-full">Calculate & Save</button>
                 </div>
             </form>
         </section>
 
+        <!-- PROFILE PAGE -->
+        <section id="profile-page" class="view hidden">
+            <div class="calc-header fade-in">
+                <h2>My <span class="text-gradient">Profile</span></h2>
+            </div>
+            
+            <div class="dashboard-grid fade-in-up delay-1">
+                <div class="glass" style="padding: 30px;">
+                    <h3>Personal Info</h3>
+                    <div style="margin-top: 20px;">
+                        <p><strong>Username:</strong> <span id="prof-username"></span></p>
+                        <p><strong>Email:</strong> <span id="prof-email"></span></p>
+                        <p><strong>Joined:</strong> <span id="prof-joined"></span></p>
+                    </div>
+                </div>
+                <div class="glass" style="padding: 30px;">
+                    <h3>Location Settings</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Set your location to receive local weather data and customized environmental suggestions.</p>
+                    <p><strong>Current Location:</strong> <span id="prof-location" class="text-primary">Not set</span></p>
+                    <button id="btn-get-location" class="btn btn-outline" style="margin-top: 20px;"><i class="fa-solid fa-location-crosshairs"></i> Get Live Location</button>
+                    <p id="loc-status" style="font-size: 0.85rem; margin-top: 10px; color: var(--text-light);"></p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- FOOTER -->
+    <!-- FLOATING CHAT WIDGET -->
+    <div id="chat-widget" class="chat-widget hidden">
+        <div class="chat-header">
+            <h4><i class="fa-solid fa-robot"></i> Eco Assistant</h4>
+            <button id="close-chat" class="btn-icon" style="background: none; border: none; color: white; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-msg bot-msg">Hi! I'm your Eco Assistant. Ask me anything about your footprint or sustainability tips!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button id="send-chat" class="btn btn-primary btn-icon"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    
+    <button id="open-chat-btn" class="floating-chat-btn hidden">
+        <i class="fa-solid fa-message"></i>
+    </button>
+
+    <!-- Global Footer -->
     <footer class="footer glass">
         <div class="footer-content">
             <div class="footer-brand">
