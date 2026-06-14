@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from models import db, User, CarbonRecord, Goal, Challenge, Achievement
-from ai_engine import get_recommendations
+from ai_engine import get_recommendations, chat_with_ai
+import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key-for-dev')
@@ -137,6 +138,54 @@ def recommendations():
         
     recs = get_recommendations(latest_record)
     return jsonify({'recommendations': recs}), 200
+
+@app.route('/api/user/profile', methods=['GET', 'PUT'])
+@login_required
+def user_profile():
+    if request.method == 'PUT':
+        data = request.get_json()
+        if 'location_lat' in data and 'location_lon' in data:
+            current_user.location_lat = float(data['location_lat'])
+            current_user.location_lon = float(data['location_lon'])
+            current_user.location_name = data.get('location_name', '')
+            db.session.commit()
+            return jsonify({'message': 'Location updated successfully', 'user': current_user.to_dict()}), 200
+        return jsonify({'error': 'Invalid data'}), 400
+        
+    return jsonify({'user': current_user.to_dict()}), 200
+
+@app.route('/api/weather', methods=['GET'])
+@login_required
+def weather():
+    if not current_user.location_lat or not current_user.location_lon:
+        return jsonify({'error': 'Location not set'}), 400
+        
+    weather_api_key = os.getenv("WEATHER_API_KEY")
+    if not weather_api_key:
+        return jsonify({'error': 'Weather API key not configured'}), 500
+        
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={current_user.location_lat}&lon={current_user.location_lon}&appid={weather_api_key}&units=metric"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return jsonify(response.json()), 200
+        return jsonify({'error': 'Failed to fetch weather'}), response.status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/chat', methods=['POST'])
+@login_required
+def chat():
+    data = request.get_json()
+    message = data.get('message', '')
+    if not message:
+        return jsonify({'error': 'Message is required'}), 400
+        
+    latest_record = CarbonRecord.query.filter_by(user_id=current_user.id).order_by(CarbonRecord.created_at.desc()).first()
+    context = latest_record.to_dict() if latest_record else None
+    
+    reply = chat_with_ai(message, context)
+    return jsonify({'reply': reply}), 200
 
 @app.route('/api/goals', methods=['POST', 'GET'])
 @login_required

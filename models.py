@@ -13,6 +13,9 @@ class User(UserMixin, db.Model):
     points = db.Column(db.Integer, default=0)
     level = db.Column(db.String(50), default='Seed')
     sustainability_score = db.Column(db.Integer, default=0)
+    location_lat = db.Column(db.Float, nullable=True)
+    location_lon = db.Column(db.Float, nullable=True)
+    location_name = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     records = db.relationship('CarbonRecord', backref='user', lazy=True)
@@ -27,6 +30,9 @@ class User(UserMixin, db.Model):
             'points': self.points,
             'level': self.level,
             'sustainability_score': self.sustainability_score,
+            'location_lat': self.location_lat,
+            'location_lon': self.location_lon,
+            'location_name': self.location_name,
             'created_at': self.created_at.isoformat()
         }
 
