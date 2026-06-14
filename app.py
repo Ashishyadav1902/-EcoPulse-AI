@@ -144,12 +144,23 @@ def recommendations():
 def user_profile():
     if request.method == 'PUT':
         data = request.get_json()
+        updated = False
+        
         if 'location_lat' in data and 'location_lon' in data:
             current_user.location_lat = float(data['location_lat'])
             current_user.location_lon = float(data['location_lon'])
             current_user.location_name = data.get('location_name', '')
+            updated = True
+            
+        elif 'city' in data:
+            # User manually inputted city
+            current_user.location_name = data['city']
+            updated = True
+            
+        if updated:
             db.session.commit()
             return jsonify({'message': 'Location updated successfully', 'user': current_user.to_dict()}), 200
+            
         return jsonify({'error': 'Invalid data'}), 400
         
     return jsonify({'user': current_user.to_dict()}), 200
@@ -157,14 +168,18 @@ def user_profile():
 @app.route('/api/weather', methods=['GET'])
 @login_required
 def weather():
-    if not current_user.location_lat or not current_user.location_lon:
-        return jsonify({'error': 'Location not set'}), 400
-        
     weather_api_key = os.getenv("WEATHER_API_KEY")
     if not weather_api_key:
         return jsonify({'error': 'Weather API key not configured'}), 500
         
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={current_user.location_lat}&lon={current_user.location_lon}&appid={weather_api_key}&units=metric"
+    url = None
+    if current_user.location_name and not current_user.location_name.startswith("Lat:"):
+        url = f"https://api.openweathermap.org/data/2.5/weather?q={current_user.location_name}&appid={weather_api_key}&units=metric"
+    elif current_user.location_lat and current_user.location_lon:
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat={current_user.location_lat}&lon={current_user.location_lon}&appid={weather_api_key}&units=metric"
+    else:
+        return jsonify({'error': 'Location not set'}), 400
+        
     try:
         response = requests.get(url)
         if response.status_code == 200:
